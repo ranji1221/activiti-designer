@@ -32,8 +32,8 @@ easyui、jqueryui plugin以及著名的js框架*draw2d*开发的。<br/>
 	<a name="使用说明"></a>
 ##	使用说明
 	<a name="获取代码"></a>
-###	 获取代码
-	* github项目主页：<http://https://github.com/ranji1221/activiti-designer>
+###	获取代码
+	* github项目主页：<*http://https://github.com/ranji1221/activiti-designer*>
 
 	<a name="其他"></a>
 ##	其他
