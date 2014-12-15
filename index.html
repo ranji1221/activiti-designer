@@ -1,0 +1,163 @@
+<!-- 
+	项目说明：Activiti-Designer是为业务人员、开发人员及系统管理员用图形化方式方便友好的设计工作流而开发的项目。
+	版权所有 (C) 2014 纪冉
+	这一程序是自由软件，你可以遵照自由软件基金会出版的GNU通用公共许可证条款来修改和重新发布这一程序。或者用许可证的第二版，或者（根据你的选择）用任何更新的版本。
+	发布这一程序的目的是希望它有用，但没有任何担保。甚至没有适合特定目的的隐含的担保。更详细的情况请参阅GNU通用公共许可证。
+	你应该已经和程序一起收到一份GNU通用公共许可证的副本。如果还没有，
+	写信给：
+	The Free Software Foundation, Inc., 675 Mass Ave, Cambridge,
+	MA02139, USA
+	联系方式：QQ(95724368) 泥鳅也是鱼
+-->
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="utf-8"/>
+		<!-- saved from url=(0014)about:internet-->
+		<title>Process Designer-RanJi</title>
+		
+		<link rel="stylesheet" type="text/css" href="scripts/easyui/themes/gray/easyui.css">
+		<link rel="stylesheet" type="text/css" href="scripts/easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="scripts/designer/styles/designer.css">
+		
+		<script src="scripts/draw2d/lib/jquery-1.8.3.min.js"></script>
+		<script src="scripts/draw2d/lib/jquery-touch_punch.js"></script>
+		<script src="scripts/draw2d/lib/jquery.autoresize.js"></script>		
+		
+		<script src="scripts/draw2d/lib/contextmenu/jquery.contextmenu.js"></script>	
+		<link rel="stylesheet" type="text/css" href="scripts/draw2d/lib/contextmenu/jquery.contextmenu.css">
+		
+		<script src="scripts/draw2d/lib/shifty.js"></script>
+		<script src="scripts/draw2d/lib/raphael.js"></script>
+		<script src="scripts/draw2d/lib/rgbcolor.js"></script>
+		<script src="scripts/draw2d/lib/canvg.js"></script>
+		<script src="scripts/draw2d/lib/Class.js"></script>
+		<script src="scripts/draw2d/lib/json2.js"></script>
+		<script src="scripts/draw2d/lib/pathfinding-browser.min.js"></script>
+		
+		<script src="scripts/draw2d/draw2d.js"></script>		
+		<script src="scripts/easyui/jquery.easyui.min.js"></script>	
+		
+		<!-- 以下JS为应用的整体布局的JS -->
+		<script src="scripts/designer/Application.js"></script>	
+		<script src="scripts/designer/canvas/Canvas.js"></script>
+		<script src="scripts/designer/accordion/Accordion.js"></script>
+		<script src="scripts/designer/toolbar/ToolBar.js"></script>	
+		<!-- 以下JS为各个节点的JS -->
+		<script src="scripts/designer/figures/Start.js"></script>	
+		<script src="scripts/designer/figures/End.js"></script>	
+		<script src="scripts/designer/figures/UserTask.js"></script>	
+		
+		<script>
+			$(window).load(function(){
+			
+				//-- 2. activiti-designer的连接器(全局)
+		
+			
+				var app = new org.ranji.activiti.Application();
+			
+				
+				app.loadFigure();
+				
+				/*
+				updatePreview(app.canvas);
+				
+				app.canvas.getCommandStack().addEventListener(function(e){
+				  if(e.isPostChangeEvent()){
+					  updatePreview(app.canvas);
+				   }
+				});*/ 
+				
+				
+				displayJSON(app.canvas);
+				
+				app.canvas.getCommandStack().addEventListener(function(e){
+				  if(e.isPostChangeEvent()){
+					  displayJSON(app.canvas);
+				   }
+				}); 
+				
+			});
+			
+			/*
+			function updatePreview(canvas){
+			
+				//-- convert the canvas into a PNG IMage source string
+				var xCoords = [];
+				var yCoords = [];
+				canvas.getFigures().each(function(i,f){
+					var b = f.getBoundingBox();
+					xCoords.push(b.x,b.x+b.w);
+					yCoords.push(b.y,b.y+b.h);
+				});
+				
+				var minX = Math.min.apply(Math,xCoords);
+				var minY = Math.min.apply(Math,yCoords);
+				var width = Math.max.apply(Math,xCoords)-minX;
+				var height = Math.max.apply(Math,yCoords)-minY;
+			
+				var writer = new draw2d.io.png.Writer();
+				writer.marshal(canvas,function(png){
+				   $("#preview").attr("src",png);
+				},new draw2d.geo.Rectangle(minX,minY,width,height));
+			};*/
+			
+			function displayJSON(canvas){
+				var writer = new draw2d.io.json.Writer();
+				writer.marshal(canvas,function(json){
+					$("#json").text(JSON.stringify(json, null, 2));
+				});
+			}
+			
+		</script>	
+		
+	</head>
+	<body class="easyui-layout">
+		<div data-options="region:'north',height:38">
+			<div id="activitiToolBar" class="easyui-panel" border="0" style="padding:5px;background:#E1F0F2">
+				<a href="javascript:void(0)" class="easyui-splitbutton" menu="#edit-menu" iconCls="icon-edit">Edit</a>
+				<div id="edit-menu" style="width:150px;">
+					<div id="undoButton" iconCls="icon-undo" onclick="javascript:void(0)">Undo</div>
+					<div id="redoButton" iconCls="icon-redo" onclick="javascript:void(0)">Redo</div>
+				</div>
+			</div>
+		</div>
+		<div data-options="region:'west',width:150" iconCls="bpm-nav-icon" title="Navigation">
+			<div class="easyui-accordion" fit="true" border="false">
+				<div id="event" title="Event" iconCls="bpm-menu-icon" class="bpm-menu">
+					<a href="##" class="easyui-linkbutton" plain="true" iconCls="start-event-icon">Start</a><br>
+					<a href="##" class="easyui-linkbutton" plain="true" iconCls="end-event-icon">End</a><br>
+				</div>
+				<div id="task" title="Task" iconCls="bpm-menu-icon" selected="true" class="bpm-menu">
+					<a href="#" class="easyui-linkbutton" plain="true" iconCls="user-task-icon">User Task</a><br>
+					<a href="#" class="easyui-linkbutton" plain="true" iconCls="manual-task-icon">Manual Task</a><br>
+					<a href="#" class="easyui-linkbutton" plain="true" iconCls="service-task-icon">Service Task</a><br>
+					<a href="#" class="easyui-linkbutton" plain="true" iconCls="script-task-icon">Script Task</a><br>
+					<a href="#" class="easyui-linkbutton" plain="true" iconCls="mail-task-icon">Mail Task</a><br>
+					<a href="#" class="easyui-linkbutton" plain="true" iconCls="receive-task-icon">Receive Task</a><br>
+					<a href="#" class="easyui-linkbutton" plain="true" iconCls="business-rule-task-icon">Business Rule Task</a><br>
+					<a href="#" class="easyui-linkbutton" plain="true" iconCls="subprocess-icon">SubProcess</a><br>
+					<a href="#" class="easyui-linkbutton" plain="true" iconCls="callactivity-icon">CallActivity</a><br>
+				</div>
+				<div id="gateway" title="Gateway" iconCls="bpm-menu-icon" class="bpm-menu">
+					<a href="##" class="easyui-linkbutton" plain="true" iconCls="parallel-gateway-icon">ParallelGateway</a><br>
+					<a href="##" class="easyui-linkbutton" plain="true" iconCls="exclusive-gateway-icon">ExclusiveGateway</a><br>
+				</div>
+				<div id="boundary-event" title="Boundary event" iconCls="bpm-menu-icon" class="bpm-menu">
+					<a href="##" class="easyui-linkbutton" plain="true" iconCls="timer-boundary-event-icon">TimerBoundaryEvent</a><br>
+					<a href="##" class="easyui-linkbutton" plain="true" iconCls="error-boundary-event-icon">ErrorBoundaryEvent</a><br>
+				</div>
+			</div>
+		</div>
+		<div data-options="region:'center'" title="WorkSpace">
+			<div id="activitiCanvas" style="position:relative;width:2500px;height:2500px;background-image:url(images/grid.png);"></div>
+			<!-- 暂时注释掉预览图的功能
+			<div style="border-radius:5px;overflow:auto;position:absolute; top:30px; right:20px; width:170px; height:170px; border:3px solid gray;background-color:#dceffd;opacity:0.8">
+				<img id="preview" style="width:150px; height:150px;"/>
+			</div>
+			-->
+			<pre id="json" style="border-radius:5px;overflow:auto;position:absolute; top:30px; right:20px; width:350px; height:500px; border:3px solid gray;background-color:#dceffd;opacity:0.8">
+			</pre>
+		</div>
+	</body>
+</html>
