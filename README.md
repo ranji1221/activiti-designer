@@ -1,5 +1,5 @@
 # activiti-designer
-	[RanJi]（http://www.ranji.org）
+	
 	## 目录
 * [背景介绍](#背景介绍)
 * [项目介绍](#项目介绍)
